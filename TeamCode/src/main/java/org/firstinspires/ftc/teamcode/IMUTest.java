@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -21,13 +23,15 @@ public class IMUTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        FtcDashboard dashboard = FtcDashboard.getInstance();
         waitForStart();
         if (opModeIsActive()) {
             // Pre-run
+            telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
             while (opModeIsActive()) {
                 // OpMode loop
             }
         }
     }
+
 }
