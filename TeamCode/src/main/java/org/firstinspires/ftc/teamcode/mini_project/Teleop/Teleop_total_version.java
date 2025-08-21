@@ -18,8 +18,7 @@ import org.firstinspires.ftc.teamcode.mini_project.hardware.WRIST;
 public class Teleop_total_version extends LinearOpMode{
 
     IMU_Driving imu_driving = new IMU_Driving();
-
-
+    Chamber_Action chamber_action = new Chamber_Action();
     public DcMotor FR, FL, RR, RL;
     public DcMotor HRS, HLS, RS;
     public Servo GRIP, WRIST, PINGER, ARM_L, ARM_R;
@@ -68,7 +67,11 @@ public class Teleop_total_version extends LinearOpMode{
             imu_driving.getYaw();
             imu_driving.mecanumDriveStickView();
 
+            if(gamepad1.a) {
 
+                chamber_action.Hanging();
+
+            }
 
 
 
