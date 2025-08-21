@@ -4,19 +4,24 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gam
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.mini_project.hardware.Robot;
 
 public class IMU_Driving {
 
-    Robot robot = new Robot();
-
     public IMU imu_IMU;
+    DcMotor FL,FR,RL,RR;
 
 
+    public IMU_Driving(DcMotor FL, DcMotor FR, DcMotor RL, DcMotor RR){
+        this.FL = FL;
+        this.FR = FR;
+        this.RL = RL;
+        this.RR = RR;
+    }
      public double speed = 1.0;  /** 메카넘 주행 속도, 속도 조절 변수로도 사용 */
 
     double yaw;
@@ -91,10 +96,10 @@ public class IMU_Driving {
         telemetry.addData("y", y);
         telemetry.addData("rx", rx);
         denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
-        robot.FR.setPower((y + x + rx) / denominator * speed);
-        robot.FL.setPower(((y - x) + rx) / denominator * speed);
-        robot.RR.setPower(((y - x) - rx) / denominator * speed);
-        robot.RL.setPower(((y + x) - rx) / denominator * speed);
+        FR.setPower((y + x + rx) / denominator * speed);
+        FL.setPower(((y - x) + rx) / denominator * speed);
+        RR.setPower(((y - x) - rx) / denominator * speed);
+        RL.setPower(((y + x) - rx) / denominator * speed);
     }
 
 }
