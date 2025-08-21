@@ -1,28 +1,34 @@
-package org.firstinspires.ftc.teamcode.mini_project.hardware;
-
+package org.firstinspires.ftc.teamcode.mini_project.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.mini_project.Action.IMU_Driving;
+import org.firstinspires.ftc.teamcode.mini_project.Action.Chamber_Action;
+import org.firstinspires.ftc.teamcode.mini_project.hardware.ARM;
+import org.firstinspires.ftc.teamcode.mini_project.hardware.GRIP;
+import org.firstinspires.ftc.teamcode.mini_project.hardware.PINGER;
+import org.firstinspires.ftc.teamcode.mini_project.hardware.Robot;
+import org.firstinspires.ftc.teamcode.mini_project.hardware.WRIST;
+@TeleOp
+public class Teleop_total_version extends LinearOpMode{
 
-@TeleOp()
-public class Robot extends LinearOpMode {
+    IMU_Driving imu_driving = new IMU_Driving();
 
-    //GRIP: 0.24 (catch)
-    //WRIST: 0 (hang) 0.5(pick) 0.4 (collection)
-    //PINGER: 0 (hang) 0.65 (pick)
-    //ARM: 0.65 (hang) 0.65(pick) 0.75 (collection) 1.1(reset)
 
     public DcMotor FR, FL, RR, RL;
     public DcMotor HRS, HLS, RS;
     public Servo GRIP, WRIST, PINGER, ARM_L, ARM_R;
+    public IMU imu_IMU;
 
 
+    @Override
+    public void runOpMode() {
 
-    public void initialize() {
         FR = hardwareMap.get(DcMotor.class, "FR");
         FL = hardwareMap.get(DcMotor.class, "FL");
         RR = hardwareMap.get(DcMotor.class, "RR");
@@ -31,7 +37,6 @@ public class Robot extends LinearOpMode {
         HRS = hardwareMap.get(DcMotor.class, "HSR");
         HLS = hardwareMap.get(DcMotor.class, "HSL");
         RS = hardwareMap.get(DcMotor.class, "RS");
-
 
         GRIP    = hardwareMap.get(Servo.class, "GRIP");
         WRIST  = hardwareMap.get(Servo.class, "WRIST");
@@ -45,24 +50,51 @@ public class Robot extends LinearOpMode {
         HRS.setDirection(DcMotorSimple.Direction.REVERSE);
         ARM_L.setDirection(Servo.Direction.REVERSE);
 
+        imu_IMU = hardwareMap.get(IMU.class, "imu");
+        imu_driving.IMU_INIT();
+
+
         for (DcMotor m : new DcMotor[]{FR, FL, RR, RL, HRS,HLS, RS}) {
             m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-    }
 
-    public void delay(double seconds){
-        ElapsedTime time = new ElapsedTime();
-        time.reset();
-        while (time.time(TimeUnit.SECONDS) <= seconds){
+        waitForStart();
+
+
+        while (opModeIsActive()) {
+            // Put loop blocks here.
+            imu_driving.getYaw();
+            imu_driving.mecanumDriveStickView();
+
+
+
+
+
+
+
+
+
+
+            if(gamepad1.right_bumper) {
+
+                imu_driving.speed = 0.5;
+            }
+
 
         }
-        return;
-    }
 
-    @Override
-    public void runOpMode() throws InterruptedException {
 
     }
-}
+
+
+
+
+
+
+
+
+
+
+    }
