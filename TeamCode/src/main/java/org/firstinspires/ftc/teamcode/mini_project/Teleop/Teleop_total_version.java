@@ -73,10 +73,6 @@ public class Teleop_total_version extends LinearOpMode{
 
 
 
-
-
-
-
             if(gamepad1.right_bumper) {
 
                 imu_driving.speed = 0.5;
