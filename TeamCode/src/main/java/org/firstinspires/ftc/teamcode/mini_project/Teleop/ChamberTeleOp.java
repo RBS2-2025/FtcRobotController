@@ -83,6 +83,7 @@ public class ChamberTeleOp extends LinearOpMode {
                 if(gamepad2.a) chamber.grip();
                 if(gamepad2.b) chamber.hang();
                 if(gamepad2.y) chamber.collect();
+                if(gamepad1.right_bumper) imu_driving.speed = 0.5;
                 chamber.moveSlider(gamepad2.left_stick_y,1);
                 chamber.rotateSlider(gamepad2.right_stick_y);
                 telemetry.addData("l: ", hsl.getCurrentPosition());
