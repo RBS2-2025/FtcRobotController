@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mini_project.hardware;
+package org.firstinspires.ftc.teamcode.mini_project.hardware.pose;
 
 public enum GRIP{
     RELEASE(0),
