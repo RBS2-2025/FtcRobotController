@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.mini_project.Action.BasicMovement;
 import org.firstinspires.ftc.teamcode.mini_project.Action.Chamber;
 import org.firstinspires.ftc.teamcode.mini_project.Action.IMU_Driving;
 
@@ -64,11 +65,11 @@ public class ChamberTeleOp extends LinearOpMode {
 
         initialize();
         Chamber chamber = new Chamber(rsr,rsl,hsl,hsr,grip,wrist,pinger,arm_L,arm_R,pid);
-        IMU_Driving imu_driving = new IMU_Driving();
-
+//        IMU_Driving imu_driving = new IMU_Driving(FL,FR,RL,RR,imu_IMU,telemetry,gamepad1);
+        BasicMovement movement = new BasicMovement(FL,FR,RL,RR);
         dashboard = FtcDashboard.getInstance();
         dashboard.getTelemetry();
-        imu_driving.IMU_INIT();
+//        imu_driving.IMU_INIT();
 
 
         waitForStart();
@@ -77,13 +78,14 @@ public class ChamberTeleOp extends LinearOpMode {
 //            chamber.moveSliderTo(400,1);
             while (opModeIsActive()) {
                 // OpMode loop
-                imu_driving.getYaw();
-                imu_driving.mecanumDriveStickView();
+//                imu_driving.getYaw();
+//                imu_driving.mecanumDriveStickView();
 
                 if(gamepad2.a) chamber.grip();
                 if(gamepad2.b) chamber.hang();
                 if(gamepad2.y) chamber.collect();
-                if(gamepad1.right_bumper) imu_driving.speed = 0.5;
+//                if(gamepad1.right_bumper) imu_driving.speed = 0.5;
+                movement.move(gamepad1.left_stick_x, gamepad1.left_stick_y,gamepad1.right_stick_x);
                 chamber.moveSlider(gamepad2.left_stick_y,1);
                 chamber.rotateSlider(gamepad2.right_stick_y);
                 telemetry.addData("l: ", hsl.getCurrentPosition());

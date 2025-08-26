@@ -35,10 +35,10 @@ public class Chamber {
     }
 
 
-    void delay(double t){
+    void delay(double t) {
         ElapsedTime time = new ElapsedTime();
         time.reset();
-        while (time.seconds() <= t){
+        while (time.seconds() <= t) {
 
         }
         return;
@@ -49,12 +49,12 @@ public class Chamber {
         pinger.setPosition(PINGER.PICK.value);
         grip.setPosition(GRIP.RELEASE.value);
 
-        delay(0.05);
+        delay(0.5);
         arm_R.setPosition(ARM.PICK.value);
         arm_L.setPosition(ARM.PICK.value);
-        delay(0.05);
+        delay(0.5);
         grip.setPosition(GRIP.CATCH.value);
-        delay(0.02);
+        delay(0.3);
 
         arm_R.setPosition(ARM.RESET.value);
         arm_L.setPosition(ARM.RESET.value);
@@ -65,12 +65,12 @@ public class Chamber {
         pinger.setPosition(PINGER.COLLECT.value);
         grip.setPosition(GRIP.RELEASE.value);
 
-        delay(0.05);
+        delay(0.5);
         arm_R.setPosition(ARM.COLLECT.value);
         arm_L.setPosition(ARM.COLLECT.value);
-        delay(0.05);
+        delay(0.5);
         grip.setPosition(GRIP.CATCH.value);
-        delay(0.02);
+        delay(0.3);
 
         arm_R.setPosition(ARM.RESET.value);
         arm_L.setPosition(ARM.RESET.value);
@@ -82,7 +82,7 @@ public class Chamber {
         grip.setPosition(GRIP.CATCH.value);
         wrist.setPosition(WRIST.HANG.value);
         pinger.setPosition(PINGER.HANG.value);
-        delay(0.1);
+        delay(0.3);
         arm_L.setPosition(ARM.HANG2.value);
         arm_R.setPosition(ARM.HANG2.value);
     }

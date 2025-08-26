@@ -1,21 +1,32 @@
 package org.firstinspires.ftc.teamcode.mini_project.Action;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class IMU_Driving {
+    public IMU_Driving(DcMotor fl, DcMotor fr, DcMotor rl, DcMotor rr, IMU imu, Telemetry telemetry, Gamepad gamepad){
+        this.imu_IMU = imu;
+        this.tel = telemetry;
+        this.gamepad1 = gamepad;
+        this.FL = fl;
+        this.FR = fr;
+        this.RL = rl;
+        this.RR = rr;
+    }
 
 
     public IMU imu_IMU;
 
     DcMotor FL, FR, RL, RR;
+    Telemetry tel;
+    Gamepad gamepad1;
 
     public double speed = 1.0;  /** 메카넘 주행 속도, 속도 조절 변수로도 사용 */
 
@@ -26,10 +37,10 @@ public class IMU_Driving {
         // Creates a Parameters object for use with an IMU in a REV Robotics Control Hub or
         // Expansion Hub, specifying the hub's orientation on the robot via the direction that
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
-        imu_IMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        imu_IMU.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
         // Prompt user to press start button.
-        telemetry.addData("IMU Init!", "Press start to continue...");
-        telemetry.update();
+        tel.addData("IMU Init!", "Press start to continue...");
+        tel.update();
     }
 
     /**
@@ -37,7 +48,7 @@ public class IMU_Driving {
      */
     public void getYaw() {
         yaw = imu_IMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        telemetry.addData("yaw", yaw);
+        tel.addData("yaw", yaw);
     }
 
 
@@ -54,10 +65,10 @@ public class IMU_Driving {
 
         if (0.01 < Math.abs(gamepad1.left_stick_x) || 0.01 < Math.abs(gamepad1.left_stick_y)) {
             headingDir = Math.atan2(-gamepad1.left_stick_x, -gamepad1.left_stick_y) / Math.PI * 180;
-            telemetry.addData("HeadingDir", headingDir);
+            tel.addData("HeadingDir", headingDir);
             movingDir = headingDir - yaw;
             y = Math.cos(movingDir / 180 * Math.PI) * 1;
-            x = -Math.sin(movingDir / 180 * Math.PI) * 1;
+            x = Math.sin(movingDir / 180 * Math.PI) * 1; //원래 -sin
         } else {
             y = 0;
             x = 0;
@@ -72,11 +83,11 @@ public class IMU_Driving {
                 diffAngle = 360 - Math.abs(diffAngle);
             }
             if (Math.abs(diffAngle) > 50) {
-                rx = (diffAngle / Math.abs(diffAngle)) * 0.7;
+                rx = (diffAngle / Math.abs(diffAngle)) * 1; //원래 0.7
             } else {
                 rx = diffAngle / 50;
             }
-            telemetry.addData("stopDir", stopDir);
+            tel.addData("stopDir", stopDir);
         } else {
             if (gamepad1.dpad_left) {
                 rx = -0.5;
@@ -86,10 +97,10 @@ public class IMU_Driving {
                 rx = 0;
             }
         }
-        telemetry.addData("diffAngle", diffAngle);
-        telemetry.addData("x", x);
-        telemetry.addData("y", y);
-        telemetry.addData("rx", rx);
+        tel.addData("diffAngle", diffAngle);
+        tel.addData("x", x);
+        tel.addData("y", y);
+        tel.addData("rx", rx);
         denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
         FR.setPower((y + x + rx) / denominator * speed);
         FL.setPower(((y - x) + rx) / denominator * speed);
