@@ -4,22 +4,22 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.mini_project.hardware.pose.ARM;
-import org.firstinspires.ftc.teamcode.mini_project.hardware.pose.GRIP;
-import org.firstinspires.ftc.teamcode.mini_project.hardware.pose.PINGER;
-import org.firstinspires.ftc.teamcode.mini_project.hardware.pose.WRIST;
+import org.firstinspires.ftc.teamcode.mini_project.Action.Chamber;
+
 
 @Config
 @TeleOp(name = "DashboardTest")
 public class DashboardTest extends LinearOpMode {
 
-    public static double arm,wrist,pinger,grip = 0;
-    public static boolean doGrip, doHang, doCollect, fl,fr,rl,rr = false;
+    public static double arm,wrist,pinger,grip,rotateSpd = 0;
+
+    public static boolean servo, slider, rotation= false;
     Servo ARML,ARMR, WRIST, PINGER, GRIP;
-    DcMotor FL,FR,RL,RR;
+    DcMotor hsl,hsr,rsl,rsr;
 
     FtcDashboard dashboard;
 
@@ -32,48 +32,7 @@ public class DashboardTest extends LinearOpMode {
         return;
     }
 
-    public void grip(){
-        WRIST.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.WRIST.PICK.value);
-        PINGER.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.PINGER.PICK.value);
-        GRIP.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.GRIP.RELEASE.value);
 
-        delay(0.5);
-        ARMR.setPosition(ARM.PICK.value);
-        ARML.setPosition(ARM.PICK.value);
-        delay(0.5);
-        GRIP.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.GRIP.CATCH.value);
-        delay(0.3);
-
-        ARMR.setPosition(ARM.RESET.value);
-        ARML.setPosition(ARM.RESET.value);
-    }
-
-    public void collect(){
-        WRIST.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.WRIST.COLLECT.value);
-        PINGER.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.PINGER.COLLECT.value);
-        GRIP.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.GRIP.RELEASE.value);
-
-        delay(0.5);
-        ARMR.setPosition(ARM.COLLECT.value);
-        ARML.setPosition(ARM.COLLECT.value);
-        delay(0.5);
-        GRIP.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.GRIP.CATCH.value);
-        delay(0.3);
-
-        ARMR.setPosition(ARM.RESET.value);
-        ARML.setPosition(ARM.RESET.value);
-    }
-
-    public void hang(){
-        ARML.setPosition(ARM.HANG.value);
-        ARMR.setPosition(ARM.HANG.value);
-        GRIP.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.GRIP.CATCH.value);
-        WRIST.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.WRIST.HANG.value);
-        PINGER.setPosition(org.firstinspires.ftc.teamcode.mini_project.hardware.pose.PINGER.HANG.value);
-        delay(0.3);
-        ARML.setPosition(ARM.HANG2.value);
-        ARMR.setPosition(ARM.HANG2.value);
-    }
 
     @Override
     public void runOpMode() {
@@ -85,55 +44,51 @@ public class DashboardTest extends LinearOpMode {
         GRIP = hardwareMap.servo.get("GRIP");
         ARML.setDirection(Servo.Direction.REVERSE);
 
-        FL = hardwareMap.dcMotor.get("FL");
-        FR = hardwareMap.dcMotor.get("FR"); // FR: RR
-        RL = hardwareMap.dcMotor.get("RL");
-        RR = hardwareMap.dcMotor.get("RR");
+        hsl = hardwareMap.dcMotor.get("HSL");
+        hsr = hardwareMap.dcMotor.get("HSR");
+        rsl = hardwareMap.dcMotor.get("RSL");
+        rsr = hardwareMap.dcMotor.get("RSR");
+
+        hsl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hsr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rsl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rsr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        hsl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hsr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rsl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rsr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rsl.setDirection(DcMotorSimple.Direction.REVERSE);
+        hsl.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        Chamber chamber = new Chamber(rsr,rsl,hsl,hsr,GRIP,WRIST,PINGER,ARML,ARMR);
         waitForStart();
         if (opModeIsActive()) {
             // Pre-run
-            if(doGrip){
-                grip();
-            }
-            else if(doHang){
-                hang();
-            }
-            else if(doCollect){
-                collect();
-            }
-            else {
-                ARML.setPosition(arm);
-                ARMR.setPosition(arm);
-                WRIST.setPosition(wrist);
-                PINGER.setPosition(pinger);
-                GRIP.setPosition(grip);
-            }
+
             while (opModeIsActive()) {
                 // OpMode loop
-                if(fl){
-                    FL.setPower(1);
-                    FR.setPower(0);
-                    RL.setPower(0);
-                    RR.setPower(0);
+
+                if(servo){
+                    ARML.setPosition(arm);
+                    ARMR.setPosition(arm);
+                    WRIST.setPosition(wrist);
+                    PINGER.setPosition(pinger);
+                    GRIP.setPosition(grip);
                 }
-                if(fr){
-                    FL.setPower(0);
-                    FR.setPower(1);
-                    RL.setPower(0);
-                    RR.setPower(0);
+                if(slider){
+                    chamber.moveSlider(gamepad2.left_stick_y,rotateSpd);
                 }
-                if(rl){
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    RL.setPower(1);
-                    RR.setPower(0);
+                if(rotation){
+                    chamber.RotateSlider(gamepad2.right_stick_y,opModeIsActive());
                 }
-                if(rr){
-                    FL.setPower(0);
-                    FR.setPower(0);
-                    RL.setPower(0);
-                    RR.setPower(1);
-                }
+                //////////////////////////////////////////////////////////////
+                telemetry.addData("hsl: ",hsl.getCurrentPosition());
+                telemetry.addData("hsr: ",hsr.getCurrentPosition());
+                telemetry.addData("rsl: ",rsl.getCurrentPosition());
+                telemetry.addData("rsr: ",rsr.getCurrentPosition());
+                telemetry.update();
             }
         }
     }

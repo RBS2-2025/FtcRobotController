@@ -64,7 +64,7 @@ public class ChamberTeleOp extends LinearOpMode {
     public void runOpMode() {
 
         initialize();
-        Chamber chamber = new Chamber(rsr,rsl,hsl,hsr,grip,wrist,pinger,arm_L,arm_R,pid);
+        Chamber chamber = new Chamber(rsr,rsl,hsl,hsr,grip,wrist,pinger,arm_L,arm_R);
 //        IMU_Driving imu_driving = new IMU_Driving(FL,FR,RL,RR,imu_IMU,telemetry,gamepad1);
         BasicMovement movement = new BasicMovement(FL,FR,RL,RR);
         dashboard = FtcDashboard.getInstance();
@@ -75,7 +75,7 @@ public class ChamberTeleOp extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             // Pre-run
-//            chamber.moveSliderTo(400,1);
+            chamber.ResetSliderRotation();
             while (opModeIsActive()) {
                 // OpMode loop
 //                imu_driving.getYaw();
@@ -85,11 +85,16 @@ public class ChamberTeleOp extends LinearOpMode {
                 if(gamepad2.b) chamber.hang();
                 if(gamepad2.y) chamber.collect();
 //                if(gamepad1.right_bumper) imu_driving.speed = 0.5;
+                if(gamepad1.right_bumper) movement.speed = 0.5;
+                else movement.speed = 0.7;
                 movement.move(gamepad1.left_stick_x, gamepad1.left_stick_y,gamepad1.right_stick_x);
-                chamber.moveSlider(gamepad2.left_stick_y,1);
-                chamber.rotateSlider(gamepad2.right_stick_y);
-                telemetry.addData("l: ", hsl.getCurrentPosition());
-                telemetry.addData("r: ",hsr.getCurrentPosition());
+                chamber.moveSlider(gamepad2.left_stick_y,0.7);
+                chamber.RotateSlider(gamepad2.right_stick_y,opModeIsActive());
+                //////////////////////////////////////////////////////////////
+                telemetry.addData("hsl: ", hsl.getCurrentPosition());
+                telemetry.addData("hsr: ",hsr.getCurrentPosition());
+                telemetry.addData("rsl: ", rsl.getCurrentPosition());
+                telemetry.addData("rsr: ",rsr.getCurrentPosition());
                 telemetry.update();
             }
         }

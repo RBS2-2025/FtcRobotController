@@ -68,7 +68,7 @@ public class IMU_Driving {
             tel.addData("HeadingDir", headingDir);
             movingDir = headingDir - yaw;
             y = Math.cos(movingDir / 180 * Math.PI) * 1;
-            x = Math.sin(movingDir / 180 * Math.PI) * 1; //원래 -sin
+            x = -Math.sin(movingDir / 180 * Math.PI) * 1; //원래 -sin
         } else {
             y = 0;
             x = 0;
@@ -83,7 +83,7 @@ public class IMU_Driving {
                 diffAngle = 360 - Math.abs(diffAngle);
             }
             if (Math.abs(diffAngle) > 50) {
-                rx = (diffAngle / Math.abs(diffAngle)) * 1; //원래 0.7
+                rx = (diffAngle / Math.abs(diffAngle)) * 0.7;
             } else {
                 rx = diffAngle / 50;
             }
@@ -102,7 +102,7 @@ public class IMU_Driving {
         tel.addData("y", y);
         tel.addData("rx", rx);
         denominator = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(y), Math.abs(x), Math.abs(rx))), 1));
-        FR.setPower((y + x + rx) / denominator * speed);
+        FR.setPower(((y + x) + rx) / denominator * speed);
         FL.setPower(((y - x) + rx) / denominator * speed);
         RR.setPower(((y - x) - rx) / denominator * speed);
         RL.setPower(((y + x) - rx) / denominator * speed);
